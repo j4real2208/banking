@@ -3,7 +3,10 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
+	"log"
 	"net/http"
+
+	"github.com/j4real2208/banking/service"
 )
 type Customer struct {
 	Name string`json:"full_name" xml:"name"`
@@ -11,13 +14,20 @@ type Customer struct {
 	Zipcode string `json:"zip_code" xml:"zip-code"`
 }
 
+type CustomerHandlers struct {
+	service service.CustomerService
+}
 
-
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers:= []Customer {
-		{"JOJO","New Delhi","2110002"},
-		{"Matt","New Delhi","2110002"},
-		{"Rob","New Delhi","2110002"},
+func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	// customers:= []Customer {
+	// 	{"JOJO","New Delhi","2110002"},
+	// 	{"Matt","New Delhi","2110002"},
+	// 	{"Rob","New Delhi","2110002"},
+	// }
+	// Calling the customers
+	customers ,err := ch.service.GetAllCustomer()
+	if err != nil {
+		 log.Default()
 	}
 	if r.Header.Get("Content-Type")=="application/xml"{
 		w.Header().Add("Content-Type","application/xml")		
