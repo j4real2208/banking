@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/j4real2208/banking/service"
 )
 type Customer struct {
@@ -36,4 +37,18 @@ func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Reque
 		w.Header().Add("Content-Type","application/json")
 		json.NewEncoder(w).Encode(customers)
 	}
+}
+
+func (ch *CustomerHandlers)getCustomers(w http.ResponseWriter, r *http.Request) {
+	vars:= mux.Vars(r)
+	id:= vars["customer_id"]
+	customer , err := ch.service.GetCustomer(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		log.Default()
+   }else{
+		w.Header().Add("Content-Type","application/json")
+	 	json.NewEncoder(w).Encode(customer)  
+   }
+
 }

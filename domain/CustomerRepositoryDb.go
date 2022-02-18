@@ -13,6 +13,19 @@ type CustomerRepositoryDb struct {
 	client *sql.DB
 }
 
+func (d CustomerRepositoryDb ) ByID(id string) (*Customer,error) {
+	customerSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
+	row:= d.client.QueryRow(customerSql,id)
+	var c Customer
+	err:= row.Scan(&c.Id,&c.Name,&c.City,&c.Zipcode,&c.DateofBirth,&c.Status)
+	if err != nil {
+		log.Println("Hit an error in querying a record of the customers "+err.Error())
+		return nil,err
+	}
+	return &c,nil
+
+}
+
 func (d CustomerRepositoryDb) FindAll() ([]Customer , error) {
 
 
