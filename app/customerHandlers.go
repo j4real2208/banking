@@ -9,11 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/j4real2208/banking/service"
 )
-type Customer struct {
-	Name string`json:"full_name" xml:"name"`
-	City string	`json:"city" xml:"city"`
-	Zipcode string `json:"zip_code" xml:"zip-code"`
-}
+
 
 type CustomerHandlers struct {
 	service service.CustomerService
@@ -44,11 +40,17 @@ func (ch *CustomerHandlers)getCustomers(w http.ResponseWriter, r *http.Request) 
 	id:= vars["customer_id"]
 	customer , err := ch.service.GetCustomer(id)
 	if err != nil {
-		w.WriteHeader(err.Code)
-		fmt.Fprintf(w,err.Message)
+		writeResponse(w,err.Code,err.AsMessage())
    }else{
-		w.Header().Add("Content-Type","application/json")
-	 	json.NewEncoder(w).Encode(customer)  
+	writeResponse(w,http.StatusOK,customer)
    }
 
+}
+
+func writeResponse(w http.ResponseWriter , code int , data interface{})  {
+	w.Header().Add("Content-Type","application/json")
+	w.WriteHeader(code)
+	if err:=json.NewEncoder(w).Encode(data); err != nil {
+		panic(err)
+	} 
 }
