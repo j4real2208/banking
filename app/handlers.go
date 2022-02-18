@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -28,7 +28,7 @@ func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Reque
 	// Calling the customers
 	customers ,err := ch.service.GetAllCustomer()
 	if err != nil {
-		 log.Default()
+		fmt.Fprintf(w,err.Error())
 	}
 	if r.Header.Get("Content-Type")=="application/xml"{
 		w.Header().Add("Content-Type","application/xml")		
@@ -44,8 +44,8 @@ func (ch *CustomerHandlers)getCustomers(w http.ResponseWriter, r *http.Request) 
 	id:= vars["customer_id"]
 	customer , err := ch.service.GetCustomer(id)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		log.Default()
+		w.WriteHeader(err.Code)
+		fmt.Fprintf(w,err.Message)
    }else{
 		w.Header().Add("Content-Type","application/json")
 	 	json.NewEncoder(w).Encode(customer)  

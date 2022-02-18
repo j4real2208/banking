@@ -1,5 +1,6 @@
 package domain
 
+import "github.com/j4real2208/banking/errs"
 type Customer struct {
 	Id string
 	Name string
@@ -11,5 +12,5 @@ type Customer struct {
 
 type CustomerRepository interface {
 	FindAll() ([]Customer , error)
-	ByID(string) (*Customer , error )
+	ByID(string) (*Customer , *errs.AppError )
 }
