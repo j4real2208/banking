@@ -2,7 +2,6 @@ package domain
 
 import (
 	"database/sql"
-	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -23,7 +22,7 @@ func (d CustomerRepositoryDb ) ByID(id string) (*Customer, *errs.AppError) {
 		if err==sql.ErrNoRows{
 			return nil,errs.NewNotFoundError("customer not found")
 		}else{
-			log.Println("Hit an error in querying a record of the customers "+err.Error())
+			//log.Println("Hit an error in querying a record of the customers "+err.Error())
 			return nil , errs.NewUnexpectedError("unexpected db error")
 		}
 	}
@@ -31,15 +30,15 @@ func (d CustomerRepositoryDb ) ByID(id string) (*Customer, *errs.AppError) {
 
 }
 
-func (d CustomerRepositoryDb) FindAll() ([]Customer , error) {
+func (d CustomerRepositoryDb) FindAll() ([]Customer , *errs.AppError) {
 
 
 // Query from Sql 
 findAll := "select * from customers"
 rows,err := d.client.Query(findAll)
 if err != nil {
-	log.Println("Hit an error in querying the rows map in sql"+err.Error())
-	return nil,err
+	//log.Println("Hit an error in querying the rows map in sql"+err.Error())
+	return nil,errs.NewUnexpectedError("Unexpected error from db side")
 }
 
 // Iterating through the table 
@@ -49,8 +48,8 @@ for rows.Next() {
 	var c Customer
 	err := rows.Scan(&c.Id,&c.Name,&c.City,&c.Zipcode,&c.DateofBirth,&c.Status)
 	if err != nil {
-		log.Println("Hit an error in querying a record of the customers "+err.Error())
-		return nil,err
+		//log.Println("Hit an error in querying a record of the customers "+err.Error())
+		return nil,errs.NewUnexpectedError("Unexpected error from db side")
 	}
 	customers = append(customers, c)
 }
