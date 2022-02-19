@@ -2,6 +2,8 @@ package domain
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -57,7 +59,15 @@ return customers,nil
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb{
-	client, err := sqlx.Open("mysql", "root:codecamp@tcp(localhost:3306)/banking")
+	dbUser := os.Getenv("DB_USER")
+	dbPasswd := os.Getenv("DB_PASSWD")
+	dbName := os.Getenv("DB_NAME")
+	addr := os.Getenv("SERVER_ADDRESS")
+	dbPrt := os.Getenv("DB_PORT")
+	
+	datasource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",dbUser,dbPasswd,addr,dbPrt,dbName)	
+	
+	client, err := sqlx.Open("mysql", datasource)
 	if err != nil {
 		panic(err)
 	}
