@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/j4real2208/banking/errs"
+	"github.com/j4real2208/banking/logger"
 )
 
 
@@ -20,9 +21,10 @@ func (d CustomerRepositoryDb ) ByID(id string) (*Customer, *errs.AppError) {
 	err:= row.Scan(&c.Id,&c.Name,&c.City,&c.Zipcode,&c.DateofBirth,&c.Status)
 	if err != nil {
 		if err==sql.ErrNoRows{
+			logger.Error("Error while scanning customer" + err.Error())
 			return nil,errs.NewNotFoundError("customer not found")
 		}else{
-			//log.Println("Hit an error in querying a record of the customers "+err.Error())
+			logger.Error("Hit an error in querying while querying from db possible db outage "+err.Error())
 			return nil , errs.NewUnexpectedError("unexpected db error")
 		}
 	}
@@ -43,7 +45,7 @@ if status == ""{
 }
 // Query from Sql 
 if err != nil {
-	//log.Println("Hit an error in querying the rows map in sql"+err.Error())
+	logger.Error("Hit an error in querying the rows map in sql possible db outage"+err.Error())
 	return nil,errs.NewUnexpectedError("Unexpected error from db side")
 }
 
@@ -54,7 +56,7 @@ for rows.Next() {
 	var c Customer
 	err := rows.Scan(&c.Id,&c.Name,&c.City,&c.Zipcode,&c.DateofBirth,&c.Status)
 	if err != nil {
-		//log.Println("Hit an error in querying a record of the customers "+err.Error())
+		logger.Error("Hit an error in querying a record of the customers "+err.Error())
 		return nil,errs.NewUnexpectedError("Unexpected error from db side")
 	}
 	customers = append(customers, c)
