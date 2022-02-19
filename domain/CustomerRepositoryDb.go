@@ -30,12 +30,18 @@ func (d CustomerRepositoryDb ) ByID(id string) (*Customer, *errs.AppError) {
 
 }
 
-func (d CustomerRepositoryDb) FindAll() ([]Customer , *errs.AppError) {
+func (d CustomerRepositoryDb) FindAll(status string) ([]Customer , *errs.AppError) {
 
-
+var rows *sql.Rows
+var err error
+if status == ""{
+	findAll := "select * from customers"
+	rows,err = d.client.Query(findAll)
+}else{
+	findAll := "select * from customers where status = ?"
+	rows,err = d.client.Query(findAll,status)
+}
 // Query from Sql 
-findAll := "select * from customers"
-rows,err := d.client.Query(findAll)
 if err != nil {
 	//log.Println("Hit an error in querying the rows map in sql"+err.Error())
 	return nil,errs.NewUnexpectedError("Unexpected error from db side")
