@@ -2,9 +2,6 @@ package domain
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/j4real2208/banking/errs"
@@ -58,23 +55,6 @@ if err != nil {
 return customers,nil
 }
 
-func NewCustomerRepositoryDb() CustomerRepositoryDb{
-	dbUser := os.Getenv("DB_USER")
-	dbPasswd := os.Getenv("DB_PASSWD")
-	dbName := os.Getenv("DB_NAME")
-	addr := os.Getenv("SERVER_ADDRESS")
-	dbPrt := os.Getenv("DB_PORT")
-	
-	datasource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",dbUser,dbPasswd,addr,dbPrt,dbName)	
-	
-	client, err := sqlx.Open("mysql", datasource)
-	if err != nil {
-		panic(err)
-	}
-	// See "Important settings" section.
-	client.SetConnMaxLifetime(time.Minute * 3)
-	client.SetMaxOpenConns(10)
-	client.SetMaxIdleConns(10)
-
-	return CustomerRepositoryDb{client}
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb{
+	return CustomerRepositoryDb{dbClient}
 }
