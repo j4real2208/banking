@@ -13,19 +13,21 @@ type AccountRepositoryDb struct {
 }
 
 func (d AccountRepositoryDb ) Save(a Account) (*Account , *errs.AppError) {
-	sqlinsert:= "INSERT INTO accounts (customer_id, opening_date ,account_type , amount , status ) values (?,?,?,?,?)"
-	result , err := d.client.Exec(sqlinsert,a.CustomerId,a.OpeningDate,a.AccountType,a.Amount,a.Status)
+	sqlInsert := "INSERT INTO accounts (customer_id, opening_date, account_type, amount, status) values (?, ?, ?, ?, ?)"
+	//logger.Info("Before quering sql in Accountrepo  ")
+	result, err := d.client.Exec(sqlInsert, a.CustomerId, a.OpeningDate, a.AccountType, a.Amount, a.Status)
 	if err != nil {
-		logger.Error("Error while creating a new account: "+err.Error())
+		logger.Error("Error while creating new account: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected error from database")
 	}
-	id , err := result.LastInsertId()
+
+	id, err := result.LastInsertId()
 	if err != nil {
-		logger.Error("Error while getting the id of the new account: "+err.Error())
+		logger.Error("Error while getting last insert id for new account: " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected error from database")
 	}
-	a.AccountId = strconv.FormatInt(id,10)
-	return &a , nil
+	a.AccountId = strconv.FormatInt(id, 10)
+	return &a, nil
 
 
 }

@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/j4real2208/banking/errs"
+import (
+	"github.com/j4real2208/banking/dto"
+	"github.com/j4real2208/banking/errs"
+)
 
 type Account struct {
 	AccountId string
@@ -11,6 +14,9 @@ type Account struct {
 	Status string
 }
 
+func (a  Account) ToNewAccountResponseDto() *dto.NewAccountResponse {
+	return &dto.NewAccountResponse{a.AccountId}
+}
 type AccountRepository interface {
-	Save(Account) (*Account , *errs.AppError)
+	Save(account Account) (*Account , *errs.AppError)
 }
